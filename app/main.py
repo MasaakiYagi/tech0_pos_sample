@@ -68,7 +68,7 @@ def search_product(product_query: ProductQuery = Body(...)):
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            sql = "SELECT PRD_ID PRD_CD, PRD_NAME, PRD_PRICE FROM M_PRODUCT WHERE PRD_CD = %s"
+            sql = "SELECT PRD_ID, PRD_CD, PRD_NAME, PRD_PRICE FROM M_PRODUCT WHERE PRD_CD = %s"
             cursor.execute(sql, (code,))
             result = cursor.fetchone()
             if result:
