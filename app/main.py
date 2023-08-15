@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Body, Depends
+from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pymysql
 import os
@@ -7,6 +8,15 @@ from dotenv import load_dotenv
 from typing import List
 
 app = FastAPI()
+
+# CORSを回避するために追加
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,   # 追記により追加
+    allow_methods=["*"],      # 追記により追加
+    allow_headers=["*"]       # 追記により追加
+)
 
 # .envファイルを読み込む
 load_dotenv()
