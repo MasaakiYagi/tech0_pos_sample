@@ -73,17 +73,22 @@ def search_product(product_query: ProductQuery = Body(...)):
             result = cursor.fetchone()
             if result:
                 return {
-                    "PRD_ID": result[0],
-                    "PRD_CD": result[1],
-                    "PRD_NAME": result[2],
-                    "PRD_PRICE": result[3]
+                    "status": "success",
+                    "message": {
+                        "PRD_ID": result[0],
+                        "PRD_CD": result[1],
+                        "PRD_NAME": result[2],
+                        "PRD_PRICE": result[3]
+                    }
                 }
             else:
                 raise HTTPException(
                     status_code=404, detail="Product not found")
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"An error occurred: {str(e)}")
+        return {
+            "status": "failed",
+            "detail": f"An error occurred: {str(e)}"
+        }
     finally:
         if connection:
             connection.close()
@@ -130,10 +135,18 @@ def purchase(data: Purchase, connection=Depends(get_db_connection)):
 
             connection.commit()
 
-            return {"合計金額": total_amt, "合計金額（税抜）": total_amt_ex_tax}
+            return {
+                "status": "success",
+                "message": {
+                    "合計金額": total_amt,
+                    "合計金額（税抜）": total_amt_ex_tax
+                }
+            }
     except Exception as e:
         connection.rollback()
-        raise HTTPException(
-            status_code=500, detail=f"An error occurred: {str(e)}")
+        return {
+            "status": "failed",
+            "detail": f"An error occurred: {str(e)}"
+        }
     finally:
         connection.close()
